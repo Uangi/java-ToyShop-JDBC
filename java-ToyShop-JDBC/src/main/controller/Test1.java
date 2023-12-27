@@ -1,6 +1,7 @@
 package main.controller;
 
 import java.sql.Connection;
+
 import java.sql.Statement;
 import java.util.Scanner;
 
@@ -12,7 +13,6 @@ public class Test1 {
 	public static void main(String[] args) {
 
 		/* 자바는 AutoCommit -> 트랜잭션을 false로 해놓고 3개의 데이터가 맞아야 들어감.*/
-		
 		
 		Scanner sc = new Scanner(System.in);
 		Connection conn = DBConn.getConnection();
@@ -64,13 +64,10 @@ public class Test1 {
 					break;
 
 				case 2 :
-					
 					break;
 					
 				case 3 :
 					System.exit(0);
-					
-				
 				}
 				
 			}

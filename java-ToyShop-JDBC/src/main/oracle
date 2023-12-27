@@ -1,0 +1,35 @@
+CREATE USER JYP
+IDENTIFIED BY a123
+DEFAULT TABLESPACE USERS
+TEMPORARY TABLESPACE TEMP;
+
+GRANT CONNECT, RESOURCE, UNLIMITED TABLESPACE TO JYP;
+
+-- User
+create table Buyer
+(
+id number primary key,
+order_id varchar2(10) not null,
+order_pwd varchar2(8)
+);
+
+-- Product
+create table Product (
+  2  product_id NUMBER PRIMARY KEY,	-- 제품 코드, 이름, 가격
+  3  product_name varchar(20) not null,
+  4  price number);
+
+-- Tag
+CREATE TABLE Tag (
+    tag_id NUMBER PRIMARY KEY,
+    tag_name VARCHAR2(50) NOT NULL
+);
+
+--Product_Tag
+CREATE TABLE Product_Tag (
+    product_id NUMBER,
+    tag_id NUMBER,
+    PRIMARY KEY (product_id, tag_id),
+    FOREIGN KEY (product_id) REFERENCES Product(product_id),
+    FOREIGN KEY (tag_id) REFERENCES Tag(tag_id)
+);
