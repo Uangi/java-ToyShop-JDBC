@@ -1,7 +1,9 @@
 package main.db;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 
 public class DBConn {
 
@@ -25,7 +27,7 @@ public class DBConn {
 		return dbConn;
 	}
 
-	public static void close() {	// db ´Ý±â
+	public static void close(Connection conn, CallableStatement cstmt, ResultSet rs) {	// db ´Ý±â
 		if(dbConn!=null) {
 			
 			try { 
