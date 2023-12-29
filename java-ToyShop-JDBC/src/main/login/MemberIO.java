@@ -9,8 +9,9 @@ public class MemberIO {
 	Scanner sc = new Scanner(System.in);
 	
 	
-	MemberDAO mao = new MemberDAO();
+	
 	public void registInput() {
+		MemberDAO mao = new MemberDAO();
 		MemberDTO mto = new MemberDTO();
 		
 		System.out.print("아이디 : ");
@@ -38,10 +39,10 @@ public class MemberIO {
 		System.out.print("비밀번호 : ");
 		String pw = scanner.nextLine();
 		 
-		     member = (MemberDTO) mao.login(id, pw);
+		     member = SessionManager.login(id, pw);
 
 	        if (member != null) {
-	            SessionManager.setCurrentUser(member);
+	            SessionManager.setCurrentUser((MemberDTO) member);
 	            System.out.println("로그인 성공!");
 	        } else {
 	            System.out.println("로그인 실패!");

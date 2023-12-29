@@ -21,6 +21,7 @@ public class MemberDTO {
 		this.orderPwd = orderPwd;
 	}
 	
+	
 	@Override
 	public String toString() {
 		String str;

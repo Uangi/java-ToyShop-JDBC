@@ -1,5 +1,6 @@
 package main.login;
 
+import java.lang.reflect.Member;
 
 public class SessionManager {
 
@@ -13,7 +14,14 @@ public class SessionManager {
         currentUser = user;
     }
 
+    public static MemberDTO login(String orderId, String orderPwd) {
+    	MemberDTO member = null;
+    	return member;
+    	
+    }
+
     public static void logout() {
         currentUser = null;
     }
+    
 }

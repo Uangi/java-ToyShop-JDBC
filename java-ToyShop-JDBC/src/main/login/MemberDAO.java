@@ -1,6 +1,5 @@
 package main.login;
 
-import java.lang.reflect.Member;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 
@@ -32,11 +31,7 @@ public class MemberDAO {
 			return result;
 		}
 	
-	public Member login(String orderId, String orderPwd) {
-		Member member = null;
-		return member;
-		
-	}
+	
 	
 }
 	
