@@ -17,7 +17,7 @@ public class Main {
 		mi.firstSession();
 		while(true)  {
 			do {
-				System.out.print("1. 구매 / 2. 구매목록 / 3. 재고목록 조회 / 4. 로그아웃 / 5. 종료  : ");
+				System.out.print("\n1. 구매 / 2. 구매목록 / 3. 재고목록 조회 / 4. 로그아웃 / 5. 종료  : ");
 				ch = sc.nextInt();
 			} while(ch < 1);
 			

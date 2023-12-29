@@ -6,7 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 import main.db.DBConn;
-import oracle.jdbc.OracleTypes;
 
 public class MemberDAO {
 	
@@ -15,8 +14,7 @@ public class MemberDAO {
 	
 		public MemberDAO() { }
 	
-		public static MemberDAO getInstance() {
-        
+		public static MemberDAO getInstance() {	// 싱글톤
 			if (instance == null) {
             instance = new MemberDAO();
         }
@@ -48,6 +46,7 @@ public class MemberDAO {
 	    return result;
 	}
 		
+		// DB 내부에 아이디와 비밀번호가 일치하는지
 		 public MemberDTO loginCheck(String orderId, String orderPwd) {
 		        MemberDTO member = null;
 		        Connection conn = DBConn.getConnection();

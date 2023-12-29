@@ -8,7 +8,6 @@ public class ProductIO {	// 사용자 입력받기
 
 	ProductDAO dao = new ProductDAO();
 	ProductDTO dto = new ProductDTO();
-	Cart cart = new Cart();
 	Scanner sc = new Scanner(System.in);
 	static String productName;
 	
@@ -19,9 +18,10 @@ public class ProductIO {	// 사용자 입력받기
 	    String productName = sc.next();
 	    System.out.print("수량을 입력해주세요 : ");
 	    int quantity = sc.nextInt();
+	    
 	    System.out.println("장바구니에 추가되었습니다.");
-	    dto.setProductName(productName);
-	    dto.setQuantity(quantity);
+//	    dto.setProductName(productName);
+//	    dto.setQuantity(quantity);
 	    
 	    dao.addToCart(dto);
 	}
