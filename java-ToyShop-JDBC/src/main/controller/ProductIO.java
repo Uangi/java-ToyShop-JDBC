@@ -30,8 +30,6 @@ public class ProductIO {	// 사용자 입력받기
 	public void cartViewAndPurchase() {
 		
 		// 입력받은 제품 이름을 토대로 제품의 정보를 가져오기
-	    @SuppressWarnings("unused")
-		ProductDTO productInfo = dao.ProductInfo(productName);
 	    List<ProductDTO> cartItems = dao.getCartItems();
 	    
 	 // 구매할 품목이 있는지 확인
@@ -41,7 +39,7 @@ public class ProductIO {	// 사용자 입력받기
             // 장바구니 내용 출력
             System.out.println("장바구니 내용:");
             for (ProductDTO cartItem : cartItems) {
-                System.out.println(cartItem.toString());
+                System.out.println(cartItem.toString2());
             }
 
             // 구매 여부 확인

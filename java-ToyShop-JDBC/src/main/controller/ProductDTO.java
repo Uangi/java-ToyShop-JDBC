@@ -3,15 +3,12 @@ package main.controller;
 public class ProductDTO {		// Data Transfer Object - 데이터를 전달만 해주는 역할
 	// Value Object(VO) - 데이터를 가지고 있는 객체
 	
-//	private String order_id;
-//	private String order_pwd;
+
 	
 	private String productId;
 	private String productName;
 	private int price;
 	private int quantity;
-	private String order_id;
-	private String order_pwd;
 	private int totalprice;
 	
 	public int getTotalprice() {
@@ -20,14 +17,6 @@ public class ProductDTO {		// Data Transfer Object - 데이터를 전달만 해주는 역할
 	
 	public void setTotalprice(int totalprice) {
 		this.totalprice = totalprice;
-	}
-	
-	public String getId() {
-		return order_id;
-	}
-	
-	public String getPwd() {
-		return order_pwd;
 	}
 	
 	public String getProductId() {

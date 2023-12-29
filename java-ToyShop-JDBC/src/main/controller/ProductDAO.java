@@ -9,22 +9,25 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 import main.db.DBConn;
-import main.login.Login;
+import main.login.MemberIO;
+import main.login.MemberDTO;
 import oracle.jdbc.OracleTypes;
 
 public class ProductDAO {		// DB에 연결 처리 클래스 (Data Access Object)
 	
 	//  장바구니에 넣기
+	MemberDTO mto = new MemberDTO();
 	
 	public ProductDTO ProductInfo(String productName) {
 	    ProductDTO dto = new ProductDTO();
+	    
 	    Connection conn = DBConn.getConnection();
 	    CallableStatement cstmt = null;
 	    ResultSet rs = null;
 	    String sql;
 	   
 	    try {
-	        sql = "{call (?)}";  // getProductInfo는 제품 이름을 받아 해당 제품의 정보를 반환하는 프로시저 또는 쿼리라 가정합니다.
+	        sql = "{call getProductInfo(?,?,?,?)}";  // getProductInfo는 제품 이름을 받아 해당 제품의 정보를 반환하는 프로시저 또는 쿼리라 가정합니다.
 	        cstmt = conn.prepareCall(sql);
 	        cstmt.setString(1, productName);
 	        cstmt.registerOutParameter(2, Types.VARCHAR);  // 상품 이름
@@ -48,18 +51,22 @@ public class ProductDAO {		// DB에 연결 처리 클래스 (Data Access Object)
 	
 	
 	// 제품 구매
-	public void addToCart(ProductDTO dto) {
-        // 해당 사용자의 장바구니에 제품 추가 로직 구현
-        // 예: 사용자 ID에 해당하는 장바구니 테이블에 제품 정보 추가
-		Connection conn = DBConn.getConnection();
+	public List<ProductDTO> addToCart(ProductDTO dto) {
+	    // 해당 사용자의 장바구니에 제품 추가 로직 구현
+	    // 예: 사용자 ID에 해당하는 장바구니 테이블에 제품 정보 추가
+	    Connection conn = DBConn.getConnection();
 	    CallableStatement cstmt = null;
 	    String sql = "{call AddToCart(?,?,?,?)}";
+	    
+	    List<ProductDTO> cartItems = new ArrayList<>();
+
 	    try {
 	        cstmt = conn.prepareCall(sql);
-	        cstmt.setString(1, dto.getId());
+	        cstmt.setString(1, mto.getOrderId());
 	        cstmt.setString(2, dto.getProductName());
-	        cstmt.setInt(3, dto.getPrice());  	
+	        cstmt.setInt(3, dto.getPrice());
 	        cstmt.setInt(4, dto.getQuantity());
+
 	        // 사용자 ID 또는 다른 필요한 정보를 설정
 	        cstmt.registerOutParameter(1, OracleTypes.VARCHAR);
 	        cstmt.registerOutParameter(2, OracleTypes.VARCHAR);
@@ -67,55 +74,65 @@ public class ProductDAO {		// DB에 연결 처리 클래스 (Data Access Object)
 	        cstmt.registerOutParameter(4, OracleTypes.NUMBER);
 	        cstmt.executeUpdate();
 
+	        // addToCart에서 추가된 제품을 리스트에 담아 반환
+	        ProductDTO addedProduct = new ProductDTO();
+	        addedProduct.setProductName(dto.getProductName());
+	        addedProduct.setPrice(dto.getPrice());
+	        addedProduct.setQuantity(dto.getQuantity());
+	        addedProduct.setTotalprice(dto.getPrice() * dto.getQuantity());
+	        cartItems.add(addedProduct);
+
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	    } finally {
 	        // close resources
 	        DBConn.close(conn, cstmt, null);
 	    }
-    }
+
+	    return cartItems;
+	}
 
     // 장바구니 조회 (구매목록)
-    public List<ProductDTO> getCartItems() {
-        // 해당 사용자의 장바구니에 담긴 제품들을 조회하여 리스트로 반환
-        // 예: 사용자 ID에 해당하는 장바구니 테이블에서 제품 정보 조회
-    	List<ProductDTO> cartItems = new ArrayList<>();
-    	Connection conn = DBConn.getConnection();
-        CallableStatement cstmt = null;
-        ResultSet rs = null;
-        
-        try {
-        	String sql = "{call getCartItems(?,?)}";
-            cstmt = conn.prepareCall(sql);
-            cstmt.setString(1, "사용자 주문 id");	// 진짜 주문 아이디 넣기
-            cstmt.registerOutParameter(2, OracleTypes.CURSOR);
+	public List<ProductDTO> getCartItems() {
+	    // 해당 사용자의 장바구니에 담긴 제품들을 조회하여 리스트로 반환
+	    // 예: 사용자 ID에 해당하는 장바구니 테이블에서 제품 정보 조회
+	    List<ProductDTO> cartItems = new ArrayList<>();
+	    Connection conn = DBConn.getConnection();
+	    CallableStatement cstmt = null;
+	    ResultSet rs = null;
 
-            // 프로시저 실행
-            cstmt.execute();
+	    try {
+	        String sql = "{call getCartItems(?,?)}";
+	        cstmt = conn.prepareCall(sql);
+	        cstmt.setString(1, mto.getOrderId());  // 전달받은 주문 ID 사용
+	        cstmt.registerOutParameter(2, OracleTypes.CURSOR);
 
-            // out 파라미터의 값을 돌려받기
-            rs = (ResultSet) cstmt.getObject(2);
+	        // 프로시저 실행
+	        cstmt.execute();
 
-            // 결과 처리
-            while (rs.next()) {
-            	ProductDTO dto = new ProductDTO();
-            	dto.setProductId(rs.getString("product_id"));   // 열 인덱스 대신 열 이름 사용
-                dto.setPrice(rs.getInt("price"));
-                dto.setQuantity(rs.getInt("quantity"));
-                dto.setProductName(rs.getString("product_name"));
-                dto.setTotalprice(rs.getInt("price") * rs.getInt("quantity"));
+	        // out 파라미터의 값을 돌려받기
+	        rs = (ResultSet) cstmt.getObject(2);
 
-                cartItems.add(dto);
-            }
+	        // 결과 처리
+	        while (rs.next()) {
+	            ProductDTO dto = new ProductDTO();
+	            dto.setProductId(rs.getString("product_id"));
+	            dto.setPrice(rs.getInt("price"));
+	            dto.setQuantity(rs.getInt("quantity"));
+	            dto.setProductName(rs.getString("product_name"));
+	            dto.setTotalprice(rs.getInt("price") * rs.getInt("quantity"));
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            // close resources
-            DBConn.close(conn, cstmt, rs);
-        }
-        return cartItems;
-    }
+	            cartItems.add(dto);
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    } finally {
+	        // close resources
+	        DBConn.close(conn, cstmt, rs);
+	    }
+	    return cartItems;
+	}
 
     // 장바구니 구매
     public void purchaseFromCart(List<ProductDTO> cartItems) {
