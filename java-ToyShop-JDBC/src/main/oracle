@@ -5,26 +5,32 @@ TEMPORARY TABLESPACE TEMP;
 
 GRANT CONNECT, RESOURCE, UNLIMITED TABLESPACE TO JYP;
 
--- User
+-- Buyer   사용자
 create table Buyer
 (
 id number primary key,
-order_id varchar2(10) not null,
+order_id varchar2(10),
 order_pwd varchar2(8)
 );
 
--- Product
+CREATE SEQUENCE Buyer_seq
+    START WITH 1
+    INCREMENT BY 1
+    NOCACHE
+    NOCYCLE;
+commit;
+-- Product 상품
 create table Product (
-  2  product_id NUMBER PRIMARY KEY,	-- 제품 코드, 이름, 가격
-  3  product_name varchar(20) not null,
-  4  price number);
+product_id NUMBER PRIMARY KEY,	-- 제품 코드, 이름, 가격
+product_name varchar(20) not null,
+price number);
 
--- Tag
-CREATE TABLE Tag (
+-- Tag	태그
+CREATE TABLE Tag (		-- 태그 키, 태그 이름
     tag_id NUMBER PRIMARY KEY,
     tag_name VARCHAR2(50) NOT NULL
 );
-
+-- 상품 태그
 --Product_Tag
 CREATE TABLE Product_Tag (
     product_id NUMBER,
@@ -33,3 +39,208 @@ CREATE TABLE Product_Tag (
     FOREIGN KEY (product_id) REFERENCES Product(product_id),
     FOREIGN KEY (tag_id) REFERENCES Tag(tag_id)
 );
+
+------------------ 장바구니 테이블
+CREATE TABLE Cart (
+    order_id NUMBER,
+    product_id NUMBER,
+    product_name VARCHAR2(255),
+    price NUMBER,
+    quantity NUMBER,
+    CONSTRAINT fk_Buyer FOREIGN KEY (order_id) REFERENCES Buyer(order_id),
+    CONSTRAINT fk_product FOREIGN KEY (product_id) REFERENCES Product(product_id)
+);
+
+-----------------------------------------------------------------------------------------------
+-- 1. 외래 키 제약 조건 제거
+ALTER TABLE Cart DROP CONSTRAINT fk_user;
+ALTER TABLE Cart DROP CONSTRAINT fk_product;
+
+-- 2. Cart 테이블 수정 (cart_id 제거)
+ALTER TABLE Cart DROP COLUMN cart_id;
+
+-- 3. 외래 키 재설정 (order_id, product_id를 기반으로)
+ALTER TABLE Cart
+ADD CONSTRAINT fk_user FOREIGN KEY (order_id) REFERENCES Buyer(id);
+
+ALTER TABLE Cart
+ADD CONSTRAINT fk_product FOREIGN KEY (product_id) REFERENCES Product(product_id);
+-----------------------------------------------------------------------------------------------
+
+INSERT INTO Product (product_id, product_name, price) VALUES (1, '스마트폰', 5500);
+INSERT INTO Product (product_id, product_name, price) VALUES (2, '티셔츠', 2000);
+-- varchar 누적되서 들어가서 (500 이렇게 해야할듯)
+INSERT INTO Product (product_id, product_name, price) VALUES (3, '패딩', 4000);
+
+
+commit;
+
+-- VARCHAR 사이즈 변경
+ALTER TABLE Product
+MODIFY product_name VARCHAR2(255);
+
+-- 컬럼명 한번에 변경
+update
+  PRODUCT_ID,
+  PRODUCT_NAME AS "상품명",
+  PRICE AS "가격"
+FROM
+  Product;
+  
+-- 컬럼명 변경
+ALTER TABLE Product
+RENAME COLUMN 제품번호 TO 상품번호;
+commit;
+
+-- 오름차순
+SELECT * FROM Product
+ORDER BY 상품번호 ASC;
+
+-- 컬럼 내 필드값 수정
+UPDATE Product
+SET QUANTITY = 7
+WHERE PRODUCT_ID = 3;
+
+commit;
+
+------------------------------------------- 회원가입 중복기능
+CREATE OR REPLACE PROCEDURE RegisterUser(
+    p_order_id IN VARCHAR2,
+    p_order_pwd IN VARCHAR2
+) AS
+    v_count NUMBER;
+    v_id NUMBER;
+BEGIN
+    SELECT buyer_seq.NEXTVAL INTO v_id FROM dual;
+    
+    SELECT COUNT(*) INTO v_count FROM Buyer WHERE order_id = p_order_id;
+    
+    IF v_count = 0 THEN
+        
+        INSERT INTO Buyer(id, order_id, order_pwd)
+        VALUES(v_id, p_order_id, p_order_pwd);
+
+        COMMIT;
+        DBMS_OUTPUT.PUT_LINE('회원가입이 완료되었습니다.');
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('이미 존재하는 아이디입니다. 다른 아이디를 선택해주세요.');
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('회원가입 중 오류가 발생했습니다.');
+        ROLLBACK;
+END RegisterUser;
+/
+
+------------------------------------------- 리스트 조회 프로시저
+create or replace procedure listInquiry
+(presult out sys_refcursor)
+is begin
+open presult for
+select product_id, product_name, price, quantity
+from Product order by product_id;
+end;
+
+---------------- 제품 입력 후 구매목록에 넣는 쿼리  ( v_~~~로 하는건 지역변수들
+CREATE OR REPLACE PROCEDURE AddToCart(
+    p_order_id IN VARCHAR2,
+    p_product_name IN VARCHAR2,
+    p_price IN NUMBER,
+    p_quantity IN NUMBER
+) AS
+    v_price NUMBER;
+    v_quantity NUMBER;
+BEGIN
+    
+    SELECT price, quantity INTO v_price, v_quantity
+    FROM JYP.Product
+    WHERE product_name = p_product_name;
+    INSERT INTO JYP.Cart (order_id, price, quantity)
+    VALUES (p_order_id, v_price, v_quantity);
+
+    COMMIT;
+END AddToCart;
+/
+
+------------------ 장바구니 목록 조회 프로시저  getCartItems() 
+CREATE OR REPLACE PROCEDURE getCartItems(
+    p_order_id IN VARCHAR2,
+    p_result OUT SYS_REFCURSOR
+) AS
+BEGIN
+    OPEN p_result FOR
+    SELECT c.product_id, p.product_name, c.price, c.quantity
+    FROM JYP.Cart c
+    JOIN JYP.Product p ON c.product_id = p.product_id
+    WHERE c.order_id = p_order_id;
+END;
+/
+
+---------------------------------------------------------- 목록조회 2
+CREATE OR REPLACE PROCEDURE getCartItems(
+    p_order_id IN VARCHAR2,
+    p_result OUT SYS_REFCURSOR
+) AS
+BEGIN
+    OPEN p_result FOR
+    SELECT c.product_id, p.product_name, c.price, c.quantity, (c.price * c.quantity) AS total_price
+    FROM JYP.Cart c
+    JOIN JYP.Product p ON c.product_id = p.product_id
+    WHERE c.order_id = p_order_id;
+    commit;
+END;
+/
+----------------- 목록조회 후 구매할 프로시저	purchaseFromCart() 
+CREATE OR REPLACE PROCEDURE purchaseFromCart(
+    p_user_id IN NUMBER
+) AS
+BEGIN
+    -- 구매한 상품 정보를 저장할 변수
+    TYPE ProductInfo IS RECORD (
+        product_id NUMBER,
+        product_name VARCHAR2(50),
+        price NUMBER,
+        quantity NUMBER
+    );
+    
+    -- 구매한 상품 목록을 저장할 컬렉션
+    TYPE ProductInfoList IS TABLE OF ProductInfo;
+    v_purchase_list ProductInfoList := ProductInfoList();
+
+    -- 장바구니의 상품 목록 조회
+    FOR cart_item IN (SELECT product_id, price, quantity FROM JYP.Cart WHERE user_id = p_user_id) LOOP
+        -- 각 상품 정보를 ProductInfo 레코드에 저장
+        v_purchase_list.EXTEND;
+        v_purchase_list(v_purchase_list.LAST) :=
+            ProductInfo(
+                cart_item.product_id,
+                (SELECT product_name FROM JYP.Product WHERE product_id = cart_item.product_id),
+                cart_item.price,
+                cart_item.quantity
+            );
+    END LOOP;
+
+    -- 구매한 상품 목록을 활용하여 추가 작업을 수행할 수 있습니다.
+    -- 여기에서는 예시로 화면에 출력하는 로직을 추가하였습니다.
+    FOR i IN v_purchase_list.FIRST .. v_purchase_list.LAST LOOP
+        DBMS_OUTPUT.PUT_LINE('구매 상품 정보: ' || v_purchase_list(i).product_name ||
+                             ', 가격: ' || v_purchase_list(i).price ||
+                             ', 수량: ' || v_purchase_list(i).quantity);
+    END LOOP;
+
+    -- 추가 작업이 완료되면 장바구니 비우기
+    DELETE FROM JYP.Cart WHERE user_id = p_user_id;
+    COMMIT;
+END;
+/
+
+-----------------------------  장바구니 비우기 clearCart()
+CREATE OR REPLACE PROCEDURE clearCart(
+    p_user_id IN NUMBER
+) AS
+BEGIN
+    -- 특정 사용자의 장바구니 비우기
+    DELETE FROM JYP.Cart WHERE user_id = p_user_id;
+    COMMIT;
+END;
+/
