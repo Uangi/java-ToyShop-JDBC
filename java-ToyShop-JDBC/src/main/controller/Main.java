@@ -3,6 +3,7 @@ package main.controller;
 import java.util.Scanner;
 
 import main.login.MemberIO;
+import main.login.SessionManager;
 
 
 public class Main {
@@ -13,8 +14,8 @@ public class Main {
 		MemberIO mi = new MemberIO();
 		int ch;
 		
-		mi.firstSession();
 		while(true)  {
+			mi.firstSession();
 			do {
 				System.out.print("1. 구매 / 2. 구매목록 / 3. 재고목록 조회 / 4. 로그아웃 / 5. 종료  : ");
 				ch = sc.nextInt();
@@ -41,8 +42,8 @@ public class Main {
 				break;
 				
 			case 4:
-				System.out.println("?? 님이 로그아웃 합니다.");
-				mi.firstSession();	// 아직 케이스 4에 있는 상태에서 그냥 창만 넘어가나?
+				SessionManager.logout();
+				continue;
 				
 			case 5:
 				System.out.println("프로그램 종료");
