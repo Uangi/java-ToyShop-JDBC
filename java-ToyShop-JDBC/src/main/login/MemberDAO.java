@@ -23,7 +23,7 @@ public class MemberDAO {
         return instance;
     }
 		
-		public int userRegister(MemberDTO mto) {
+		public int userRegister(MemberDTO mto) {	// 회원가입
 	    int result = 0;
 	    Connection conn = DBConn.getConnection();
 	    CallableStatement cstmt = null;
@@ -36,9 +36,6 @@ public class MemberDAO {
 	        cstmt.setString(1, mto.getOrderId());
 	        cstmt.setString(2, mto.getOrderPwd());
 
-	        cstmt.registerOutParameter(1, OracleTypes.VARCHAR);
-	        cstmt.registerOutParameter(2, OracleTypes.VARCHAR);
-	        
 	        result = cstmt.executeUpdate();
 	        cstmt.close();
 

@@ -12,7 +12,6 @@ public class SessionManager {
         currentUser = user;
     }
 
-
     public static void logout() {
     	if (currentUser != null) {
             System.out.println(currentUser.getOrderId() + " 님이 로그아웃 합니다."); // 로그아웃 시에 아이디 출력

@@ -56,7 +56,6 @@ public class MemberIO {
 	
 	public MemberDTO firstSession() {
 		int pu;
-		MemberIO result = this;
 		 do {
 			System.out.println("1. 로그인 / 2. 회원가입 / 3. 로그아웃 / 4. 종료");
 			pu = sc.nextInt();
