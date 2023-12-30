@@ -14,14 +14,14 @@ public class MemberDAO {
 	
 		public MemberDAO() { }
 	
-		public static MemberDAO getInstance() {	// ½Ì±ÛÅæ
+		public static MemberDAO getInstance() {	// ï¿½Ì±ï¿½ï¿½ï¿½
 			if (instance == null) {
             instance = new MemberDAO();
         }
         return instance;
     }
 		
-		public int userRegister(MemberDTO mto) {	// È¸¿ø°¡ÀÔ
+		public int userRegister(MemberDTO mto) {	// 
 	    int result = 0;
 	    Connection conn = DBConn.getConnection();
 	    CallableStatement cstmt = null;
@@ -41,12 +41,12 @@ public class MemberDAO {
 	    } catch (Exception e) {
 	        System.out.println(e.toString());
 	    } finally {
-	        // ÀûÀýÇÑ ÀÚ¿ø ÇØÁ¦ ÄÚµå Ãß°¡
+	        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ú¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½ ï¿½ß°ï¿½
 	    }
 	    return result;
 	}
 		
-		// DB ³»ºÎ¿¡ ¾ÆÀÌµð¿Í ºñ¹Ð¹øÈ£°¡ ÀÏÄ¡ÇÏ´ÂÁö
+		// DB ï¿½ï¿½ï¿½Î¿ï¿½ ï¿½ï¿½ï¿½Ìµï¿½ï¿½ ï¿½ï¿½Ð¹ï¿½È£ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½Ï´ï¿½ï¿½ï¿½
 		 public MemberDTO loginCheck(String orderId, String orderPwd) {
 		        MemberDTO member = null;
 		        Connection conn = DBConn.getConnection();
