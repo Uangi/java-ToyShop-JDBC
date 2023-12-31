@@ -10,18 +10,18 @@ public class MemberIO {
 		
 		MemberDTO mto = new MemberDTO();
 		MemberDAO mao = MemberDAO.getInstance();
-		System.out.print("¾ÆÀÌµğ : ");
+		System.out.print("ì•„ì´ë”” : ");
         mto.setOrderId(sc.next());
-        System.out.print("ºñ¹Ğ¹øÈ£ : ");
+        System.out.print("ë¹„ë°€ë²ˆí˜¸ : ");
         mto.setOrderPwd(sc.next());
         
 	    int result = mao.userRegister(mto);
 
 	    if (result != 0) {
-	        System.out.println("°¡ÀÔ ¼º°ø!");
+	        System.out.println("ê°€ì… ì„±ê³µ!");
 	        return this;
 	    } else {
-	        System.out.println("°¡ÀÔ ½ÇÆĞ!");
+	        System.out.println("ê°€ì… ì‹¤íŒ¨!");
 	        return null;
 	    }
 	}
@@ -31,33 +31,33 @@ public class MemberIO {
 		MemberDAO mao = MemberDAO.getInstance();
 		MemberDTO member = null;
 		
-		System.out.println("·Î±×ÀÎ Ã¢");	// ³ªÁß¿¡ ²Ù¹Ì±â
+		System.out.println("ë¡œê·¸ì¸ ì°½");	// ë‚˜ì¤‘ì— ê¾¸ë¯¸ê¸°
 		 
-		System.out.print("¾ÆÀÌµğ : ");
+		System.out.print("ì•„ì´ë”” : ");
 		String id = scanner.next();
-		System.out.print("ºñ¹Ğ¹øÈ£ : ");
+		System.out.print("ë¹„ë°€ë²ˆí˜¸ : ");
 		String pw = scanner.next();
 		 
 		member = mao.loginCheck(id, pw);
 
 	        if (member != null) {
 	            SessionManager.setCurrentUser(member);
-	            System.out.println("·Î±×ÀÎ ¼º°ø!");
+	            System.out.println("ë¡œê·¸ì¸ ì„±ê³µ!");
 	        } else {
-	            System.out.println("·Î±×ÀÎ ½ÇÆĞ!");
+	            System.out.println("ë¡œê·¸ì¸ ì‹¤íŒ¨!");
 	        }
 			return member;
 	}
 	
 	public void logout() {
-		System.out.println("·Î±×¾Æ¿ôÇÕ´Ï´Ù.");
+		System.out.println("ë¡œê·¸ì•„ì›ƒí•©ë‹ˆë‹¤.");
 		SessionManager.logout();
 	}
 	
 	public MemberDTO firstSession() {
 		int pu;
 		 do {
-			System.out.println("1. ·Î±×ÀÎ / 2. È¸¿ø°¡ÀÔ / 3. ·Î±×¾Æ¿ô / 4. Á¾·á");
+			System.out.println("1. ë¡œê·¸ì¸ / 2. íšŒì›ê°€ì… / 3. ë¡œê·¸ì•„ì›ƒ / 4. ì¢…ë£Œ");
 			pu = sc.nextInt();
 		
 		 switch(pu) {
@@ -66,12 +66,12 @@ public class MemberIO {
 			 MemberDTO member = login();
              if (member != null) {
             	 SessionManager.setCurrentUser(member);
-                 return member; // ·Î±×ÀÎ ¼º°ø ½Ã¿¡¸¸ ¹İº¹¹® Å»Ãâ
+                 return member; // ë¡œê·¸ì¸ ì„±ê³µ ì‹œì—ë§Œ ë°˜ë³µë¬¸ íƒˆì¶œ
              }
 			 break;
 		
 		 case 2:
-			 registInput();	// È¸¿ø°¡ÀÔÀº Áßº¹Ã³¸®°¡ ¾Æ´Ï¶ó¸é ¹«Á¶°Ç ¼º°øÇÔ.
+			 registInput();	// íšŒì›ê°€ì…ì€ ì¤‘ë³µì²˜ë¦¬ê°€ ì•„ë‹ˆë¼ë©´ ë¬´ì¡°ê±´ ì„±ê³µí•¨.
 			 break;
 			 
 		 case 3:
@@ -79,7 +79,7 @@ public class MemberIO {
 			 break;
 			 
 		 case 4:
-			 System.out.println("ÇÁ·Î±×·¥ Á¾·á");
+			 System.out.println("í”„ë¡œê·¸ë¨ ì¢…ë£Œ");
 			 System.exit(0);
 	     
 		 	}

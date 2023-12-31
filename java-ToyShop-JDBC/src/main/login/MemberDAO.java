@@ -41,12 +41,12 @@ public class MemberDAO {
 	    } catch (Exception e) {
 	        System.out.println(e.toString());
 	    } finally {
-	        // ������ �ڿ� ���� �ڵ� �߰�
+	       
 	    }
 	    return result;
 	}
 		
-		// DB ���ο� ���̵�� ��й�ȣ�� ��ġ�ϴ���
+		// DB 내부에 똑같은 order_id나 order_pwd가 있는지 
 		 public MemberDTO loginCheck(String orderId, String orderPwd) {
 		        MemberDTO member = null;
 		        Connection conn = DBConn.getConnection();

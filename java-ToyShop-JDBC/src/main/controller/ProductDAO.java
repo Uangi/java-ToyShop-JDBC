@@ -3,212 +3,161 @@ package main.controller;
 import java.sql.CallableStatement;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
+
 import main.db.DBConn;
-import main.login.MemberIO;
 import main.login.MemberDAO;
 import main.login.MemberDTO;
 import oracle.jdbc.OracleTypes;
 
-public class ProductDAO {		// DB¿¡ ¿¬°á Ã³¸® Å¬·¡½º (Data Access Object)
+public class ProductDAO {		// DBì— ì—°ê²° ì²˜ë¦¬ í´ë˜ìŠ¤ (Data Access Object)
 	
-	 private static MemberDTO mto;
+	private static MemberDTO mto;
 	 private static MemberDTO getMemberDTOInstance() {
 	        if (mto == null) {
 	            mto = new MemberDTO();
-	            // mto¿¡ ÇÊ¿äÇÑ ÃÊ±âÈ­ ÀÛ¾÷ ¼öÇà
+	            // mtoì— í•„ìš”í•œ ì´ˆê¸°í™” ì‘ì—… ìˆ˜í–‰
 	        }
 	        return mto;
 	    }
-	//  Àå¹Ù±¸´Ï¿¡ ³Ö±â
-//	MemberDTO mto = new MemberDTO();
-//	
-//	public ProductDTO ProductInfo(String productName) {
-//	    ProductDTO dto = new ProductDTO();
-//	    
-//	    Connection conn = DBConn.getConnection();
-//	    CallableStatement cstmt = null;
-//	    ResultSet rs = null;
-//	    String sql;
-//	    
-//	    try {
-//	        sql = "{call getProductInfo(?,?,?,?)}";  // getProductInfo´Â Á¦Ç° ÀÌ¸§À» ¹Ş¾Æ ÇØ´ç Á¦Ç°ÀÇ Á¤º¸¸¦ ¹İÈ¯ÇÏ´Â ÇÁ·Î½ÃÀú ¶Ç´Â Äõ¸®¶ó °¡Á¤ÇÕ´Ï´Ù.
-//	        cstmt = conn.prepareCall(sql);
-//	        cstmt.setString(1, productName);
-//	        cstmt.registerOutParameter(2, Types.VARCHAR);  // »óÇ° ÀÌ¸§
-//	        cstmt.registerOutParameter(3, Types.NUMERIC);  // °¡°İ
-//	        cstmt.registerOutParameter(4, Types.NUMERIC);  // ¼ö·®
-//	        cstmt.execute();
-//
-//	        // ÇÁ·Î½ÃÀú¿¡¼­ ¹İÈ¯µÈ °ªµéÀ» DTO¿¡ ¼³Á¤
-//	        dto.setProductName(cstmt.getString(2));
-//	        dto.setPrice(cstmt.getInt(3));
-//	        dto.setQuantity(cstmt.getInt(4));
-//
-//	    } catch (Exception e) {
-//	        System.out.println(e.toString());
-//	    } finally {
-//	        // ResultSet, Statement, Connection µîÀÇ ÀÚ¿øÀ» ´İ´Â ÄÚµå ÇÊ¿ä
-//	    }
-//
-//	    return dto;
-//	}
-	///////////////////////////////////////////
+	// ì œí’ˆ êµ¬ë§¤
+	// ì£¼ë¬¸ IDë¥¼ ê¸°ë°˜ìœ¼ë¡œ ìƒí’ˆ ì •ë³´ ê°€ì ¸ì˜¤ê¸°
+	// ì œí’ˆ ì¶”ê°€ ë©”ì„œë“œ ìˆ˜ì •
 	
+	@SuppressWarnings("resource")
 	
-	// Á¦Ç° ±¸¸Å
-	public List<ProductDTO> addToCart(ProductDTO dto) {
-	    // ÇØ´ç »ç¿ëÀÚÀÇ Àå¹Ù±¸´Ï¿¡ Á¦Ç° Ãß°¡ ·ÎÁ÷ ±¸Çö
-	    // ¿¹: »ç¿ëÀÚ ID¿¡ ÇØ´çÇÏ´Â Àå¹Ù±¸´Ï Å×ÀÌºí¿¡ Á¦Ç° Á¤º¸ Ãß°¡
+	public void addToCart(ProductDTO dto) {
 	    Connection conn = DBConn.getConnection();
-	    CallableStatement cstmt = null;
-	    String sql = "{call AddToCart(?,?,?,?)}";
-	    
-	    List<ProductDTO> cartItems = new ArrayList<>();
-	    mto = getMemberDTOInstance(); 
+	    PreparedStatement pstmt = null;
+	    ResultSet rs = null;
+
 	    try {
-	        cstmt = conn.prepareCall(sql);
-//	        cstmt.setString(1, mto.getOrderId());	// mto¿¡¼­ ¾Æµğ,ºñ¹ø ¸ø °¡Á®¿È
-//	        cstmt.setString(2, dto.getProductName());
-//	        cstmt.setInt(3, dto.getPrice());		// °¡°İµµ ¸ø°¡Á®¿È 
-	        // setÀÌ ¾Æ´Ï¶ó db¿¡¼­ °¡Á®¿Í¾ßÇÔ.
-//	        cstmt.setInt(4, dto.getQuantity());
+	        // ì£¼ë¬¸ IDë¥¼ ê¸°ë°˜ìœ¼ë¡œ ìƒí’ˆ ì •ë³´ ê°€ì ¸ì˜¤ê¸°
+	        String getProductInfoSQL = "SELECT product_id, price, quantity FROM Product WHERE product_name = ?";
+	        pstmt = conn.prepareStatement(getProductInfoSQL);
+	        pstmt.setString(1, dto.getProductName());
+	        rs = pstmt.executeQuery();
 
-	        // »ç¿ëÀÚ ID ¶Ç´Â ´Ù¸¥ ÇÊ¿äÇÑ Á¤º¸¸¦ ¼³Á¤
-	        cstmt.registerOutParameter(1, OracleTypes.VARCHAR);
-	        cstmt.registerOutParameter(2, OracleTypes.VARCHAR);
-	        cstmt.registerOutParameter(3, OracleTypes.NUMBER);
-	        cstmt.registerOutParameter(4, OracleTypes.NUMBER);
-//	        cstmt.registerOutParameter(5, OracleTypes.NUMBER);
-	        cstmt.executeUpdate();
+	        // ìƒí’ˆ ì •ë³´ê°€ ìˆë‹¤ë©´
+	        if (rs.next()) {
+	            String productCode = rs.getString("product_id");
+	            int price = rs.getInt("price");
+	            int quantity = rs.getInt("quantity");
 
-	        // addToCart¿¡¼­ Ãß°¡µÈ Á¦Ç°À» ¸®½ºÆ®¿¡ ´ã¾Æ ¹İÈ¯
-	        ProductDTO addedProduct = new ProductDTO();
-//	        addedProduct.setProductName(dto.getProductName());
-//	        addedProduct.setPrice(dto.getPrice());
-//	        addedProduct.setQuantity(dto.getQuantity());
-//	        addedProduct.setTotalprice(dto.getPrice() * dto.getQuantity());
-	        cartItems.add(addedProduct);
+	            // ì£¼ë¬¸ì— ìƒí’ˆ ì¶”ê°€
+	            String addToCartSQL = "INSERT INTO Cart(order_id, product_id, price, quantity) VALUES (?, ?, ?, ?)";
+	            pstmt = conn.prepareStatement(addToCartSQL);
+	            pstmt.setString(1, mto.getOrderId());
+	            pstmt.setString(2, productCode);
+	            pstmt.setInt(3, quantity); // ìƒí’ˆì˜ ìˆ˜ëŸ‰ì´ ì•„ë‹Œ, êµ¬ë§¤ ì‹œ ì…ë ¥í•œ ìˆ˜ëŸ‰ì„ ì‚¬ìš©
+	            pstmt.setInt(4, quantity);
+	            pstmt.executeUpdate();
+
+	            System.out.println("ì¥ë°”êµ¬ë‹ˆì— ì¶”ê°€ë˜ì—ˆìŠµë‹ˆë‹¤.");
+	        } else {
+	            System.out.println("ìƒí’ˆ ì •ë³´ë¥¼ ê°€ì ¸ì˜¬ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
+	        }
 
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	    } finally {
 	        // close resources
-	        DBConn.close(conn, cstmt, null);
+	        DBConn.close(conn, pstmt, rs);
 	    }
-
-	    return cartItems;
 	}
 
-    // Àå¹Ù±¸´Ï Á¶È¸ (±¸¸Å¸ñ·Ï)
+	// ì¥ë°”êµ¬ë‹ˆ ì¡°íšŒ ë©”ì„œë“œ ìˆ˜ì •
 	public List<ProductDTO> getCartItems() {
-	    // ÇØ´ç »ç¿ëÀÚÀÇ Àå¹Ù±¸´Ï¿¡ ´ã±ä Á¦Ç°µéÀ» Á¶È¸ÇÏ¿© ¸®½ºÆ®·Î ¹İÈ¯
-	    // ¿¹: »ç¿ëÀÚ ID¿¡ ÇØ´çÇÏ´Â Àå¹Ù±¸´Ï Å×ÀÌºí¿¡¼­ Á¦Ç° Á¤º¸ Á¶È¸
 	    List<ProductDTO> cartItems = new ArrayList<>();
 	    Connection conn = DBConn.getConnection();
-	    CallableStatement cstmt = null;
+	    PreparedStatement pstmt = null;
 	    ResultSet rs = null;
 
 	    try {
-	        String sql = "{call getCartItems(?,?)}";
-	        cstmt = conn.prepareCall(sql);
-	        cstmt.setString(1, mto.getOrderId());  // Àü´Ş¹ŞÀº ÁÖ¹® ID »ç¿ë
-	        cstmt.registerOutParameter(2, OracleTypes.CURSOR);
+	        String getCartItemsSQL = "SELECT product_id, product_name, price, quantity FROM Cart WHERE order_id = ?";
+	        pstmt = conn.prepareStatement(getCartItemsSQL);
+	        pstmt.setString(1, mto.getOrderId());
+	        rs = pstmt.executeQuery();
 
-	        // ÇÁ·Î½ÃÀú ½ÇÇà
-	        cstmt.execute();
-
-	        // out ÆÄ¶ó¹ÌÅÍÀÇ °ªÀ» µ¹·Á¹Ş±â
-	        rs = (ResultSet) cstmt.getObject(2);
-
-	        // °á°ú Ã³¸®
+	        // ê²°ê³¼ ì²˜ë¦¬
 	        while (rs.next()) {
 	            ProductDTO dto = new ProductDTO();
 	            dto.setProductId(rs.getString("product_id"));
 	            dto.setProductName(rs.getString("product_name"));
 	            dto.setPrice(rs.getInt("price"));
 	            dto.setQuantity(rs.getInt("quantity"));
-//	            dto.setTotalprice(rs.getInt("price") * rs.getInt("quantity"));
 
 	            cartItems.add(dto);
+	        }
+
+	        // ì¥ë°”êµ¬ë‹ˆê°€ ë¹„ì–´ ìˆëŠ” ê²½ìš° ë©”ì‹œì§€ ì¶œë ¥
+	        if (cartItems.isEmpty()) {
+	            System.out.println("ì¥ë°”êµ¬ë‹ˆê°€ ë¹„ì–´ ìˆìŠµë‹ˆë‹¤.");
 	        }
 
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	    } finally {
 	        // close resources
-	        DBConn.close(conn, cstmt, rs);
+	        DBConn.close(conn, pstmt, rs);
 	    }
+
 	    return cartItems;
 	}
 
-    // Àå¹Ù±¸´Ï ±¸¸Å
-    public void purchaseFromCart(List<ProductDTO> cartItems) {
-        // Àå¹Ù±¸´Ï¿¡ ÀÖ´Â Á¦Ç°µéÀ» ½ÇÁ¦ ±¸¸Å·Î ÀÌ°üÇÏ´Â ·ÎÁ÷ ±¸Çö
-        // ¿¹: ±¸¸ÅÇÑ Á¦Ç°µéÀ» ÁÖ¹® Å×ÀÌºí¿¡ Ãß°¡ÇÏ°í Àç°í Å×ÀÌºí¿¡¼­ ¼ö·® °»½Å
-    	Connection conn = DBConn.getConnection();
-        CallableStatement cstmt = null;
-        String sql = "{call purchase_from_cart(?)}";
+	 // ì¥ë°”êµ¬ë‹ˆ êµ¬ë§¤
+    public void purchaseFromCart(List<ProductDTO> cartItems) throws SQLException {
+        Connection conn = DBConn.getConnection();
+        PreparedStatement pstmt = null;
 
         try {
-            cstmt = conn.prepareCall(sql);
-            // »ç¿ëÀÚ ID ¶Ç´Â ´Ù¸¥ ÇÊ¿äÇÑ Á¤º¸¸¦ ¼³Á¤
-            // cstmt.setString(1, userId);
+            // ì—¬ê¸°ì„œ êµ¬ë§¤ ë¡œì§ì„ ì¶”ê°€í•˜ì„¸ìš”.
+            // ì£¼ë¬¸ í…Œì´ë¸”ì— ì¶”ê°€í•˜ê³  ì¬ê³  í…Œì´ë¸”ì—ì„œ ìˆ˜ëŸ‰ ê°±ì‹  ë“±ì„ ìˆ˜í–‰í•©ë‹ˆë‹¤.
 
-            // ±¸¸ÅÇÒ Á¦Ç° Á¤º¸¸¦ ¹è¿­ ¶Ç´Â ±¸Á¶Ã¼·Î ¼³Á¤
-            // ...
-
-            cstmt.executeUpdate();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
         } finally {
             // close resources
-            DBConn.close(conn, cstmt, null);
+            DBConn.close(conn, pstmt, null);
         }
     }
 
-    // Àå¹Ù±¸´Ï ºñ¿ì±â
+    // ì¥ë°”êµ¬ë‹ˆ ë¹„ìš°ê¸°
     public void clearCart() {
-        // ÇØ´ç »ç¿ëÀÚÀÇ Àå¹Ù±¸´Ï¸¦ ºñ¿ì´Â ·ÎÁ÷ ±¸Çö
-        // ¿¹: »ç¿ëÀÚ ID¿¡ ÇØ´çÇÏ´Â Àå¹Ù±¸´Ï Å×ÀÌºíÀÇ ³»¿ë »èÁ¦
-    	Connection conn = DBConn.getConnection();
-        CallableStatement cstmt = null;
-        String sql = "{call clear_cart(?)}";
+        Connection conn = DBConn.getConnection();
+        PreparedStatement pstmt = null;
 
         try {
-            cstmt = conn.prepareCall(sql);
-            // »ç¿ëÀÚ ID ¶Ç´Â ´Ù¸¥ ÇÊ¿äÇÑ Á¤º¸¸¦ ¼³Á¤
-            // cstmt.setString(1, userId);
-
-            cstmt.executeUpdate();
+            String sql = "DELETE FROM Cart WHERE order_id = ?";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, mto.getOrderId());
+            pstmt.executeUpdate();
 
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             // close resources
-            DBConn.close(conn, cstmt, null);
+            DBConn.close(conn, pstmt, null);
         }
     }
 	
-	// Á¦Ç° °Ë»ö
+	// ì œí’ˆ ê²€ìƒ‰
 	
 	
-	// °¡°İ¼øÀ¸·Î Á¶È¸
+	// ê°€ê²©ìˆœìœ¼ë¡œ ì¡°íšŒ
 	
-	/////////////////////////////////////////////////////////////////////// ¿À´Ã±îÁö
-	
-	
-	// Á¦Ç° Ãß°¡    (°ü¸®ÀÚ)
-	
-	// Á¦Ç° ¼öÁ¤	(°ü¸®ÀÚ)
+	/////////////////////////////////////////////////////////////////////// ì˜¤ëŠ˜ê¹Œì§€
 	
 	
-	// Á¦Ç° »èÁ¦
+	// ì œí’ˆ ì¶”ê°€    (ê´€ë¦¬ì)
+	
+	// ì œí’ˆ ìˆ˜ì •	(ê´€ë¦¬ì)
+	
+	
+	// ì œí’ˆ ì‚­ì œ
 	public int dataDelete(String productId) {
 		int result = 0;
 		Connection conn = DBConn.getConnection();
@@ -218,7 +167,7 @@ public class ProductDAO {		// DB¿¡ ¿¬°á Ã³¸® Å¬·¡½º (Data Access Object)
 			sql = "{call deleteScore(?)}";
 			
 			cstmt = conn.prepareCall(sql);
-			cstmt.setString(1, productId);	// Á¦Ç°ÄÚµå¸¦ Åä´ë·Î ±× µ¥ÀÌÅÍ »èÁ¦
+			cstmt.setString(1, productId);	// ì œí’ˆì½”ë“œë¥¼ í† ëŒ€ë¡œ ê·¸ ë°ì´í„° ì‚­ì œ
 			result = cstmt.executeUpdate();
 			cstmt.close();
 			
@@ -228,27 +177,27 @@ public class ProductDAO {		// DB¿¡ ¿¬°á Ã³¸® Å¬·¡½º (Data Access Object)
 		return result;
 	}
 	
-	// Á¦Ç° ¸ñ·Ï Á¶È¸
+	// ì œí’ˆ ëª©ë¡ ì¡°íšŒ
 	public List<ProductDTO> getAllProducts() {
 		List<ProductDTO> lists = new ArrayList<ProductDTO>();
 		Connection conn = DBConn.getConnection();
 		CallableStatement cstmt = null;
 		ResultSet rs = null;
 		String sql;
-//		ResultSet - µ¥ÀÌÅÍ °á°ú¸¦ ÀÓ½ÃÀúÀå ÇØµÎ´Â °÷
+//		ResultSet - ë°ì´í„° ê²°ê³¼ë¥¼ ì„ì‹œì €ì¥ í•´ë‘ëŠ” ê³³
 		try {
 			sql = "{call listInquiry(?)}";
 			
 			cstmt = conn.prepareCall(sql);
 			
-			// out ÆÄ¶ó¹ÌÅÍ(³Ñ¾î¿À´Â CURSOR)ÀÇ ÀÚ·áÇü ¼³Á¤
+			// out íŒŒë¼ë¯¸í„°(ë„˜ì–´ì˜¤ëŠ” CURSOR)ì˜ ìë£Œí˜• ì„¤ì •
 			cstmt.registerOutParameter(1, OracleTypes.CURSOR);
 			
-			// ÇÁ·Î½ÃÀú ½ÇÇà
+			// í”„ë¡œì‹œì € ì‹¤í–‰
 			cstmt.executeQuery();
 			
-			// outÆÄ¶ó¹ÌÅÍÀÇ °ªÀ» µ¹·Á¹Ş±â - ?·Î ³Ñ¾î¿Â µ¥ÀÌÅÍ¸¦ ¹ŞÀ½
-			rs = (ResultSet)cstmt.getObject(1);	// Ã¹¹øÂ° °ª
+			// outíŒŒë¼ë¯¸í„°ì˜ ê°’ì„ ëŒë ¤ë°›ê¸° - ?ë¡œ ë„˜ì–´ì˜¨ ë°ì´í„°ë¥¼ ë°›ìŒ
+			rs = (ResultSet)cstmt.getObject(1);	// ì²«ë²ˆì§¸ ê°’
 			while (rs.next()) {
 				ProductDTO dto = new ProductDTO();
 				

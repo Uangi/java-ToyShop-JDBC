@@ -9,11 +9,11 @@ public class DBConn {
 
 	private static Connection dbConn;
 	
-	public static Connection getConnection() {	// ¿¬µ¿ ´õ ÇÒ ¶§ ip ¹øÈ£ ¹Ù²Ù°í AgetConnection(), BgetConnection() ÀÌ·±´À³¦
+	public static Connection getConnection() {	// ì—°ë™ ë” í•  ë•Œ ip ë²ˆí˜¸ ë°”ê¾¸ê³  AgetConnection(), BgetConnection() ì´ëŸ°ëŠë‚Œ
 		if(dbConn == null) {
 			try {
-				String url = "jdbc:oracle:thin:@192.168.16.5:1521:xe";  // ip¿Í °èÁ¤¸¸À¸·Î ¿¬°á
-				// [ip]:[Æ÷Æ®¹øÈ£]:[db¸í]
+				String url = "jdbc:oracle:thin:@192.168.0.10:1521:xe";  // ipì™€ ê³„ì •ë§Œìœ¼ë¡œ ì—°ê²°
+				// [ip]:[í¬íŠ¸ë²ˆí˜¸]:[dbëª…]
 				String user = "JYP";
 				String pwd = "a123";
 				
@@ -27,7 +27,7 @@ public class DBConn {
 		return dbConn;
 	}
 
-	public static void close(Connection conn, CallableStatement cstmt, ResultSet rs) {	// db ´İ±â
+	public static void close(Connection conn, CallableStatement cstmt, ResultSet rs) {	// db ë‹«ê¸°
 		if(dbConn!=null) {
 			
 			try { 
@@ -38,7 +38,7 @@ public class DBConn {
 				System.out.println(e.toString());
 			}
 		}
-		dbConn = null; // db ´İ¾Ò´Ù¸é ÃÊ±âÈ­ (¾ÈÇÏ¸é adapter ¿À·ù)
+		dbConn = null; // db ë‹«ì•˜ë‹¤ë©´ ì´ˆê¸°í™” (ì•ˆí•˜ë©´ adapter ì˜¤ë¥˜)
 	}
 
 	

@@ -8,15 +8,15 @@ public class SessionManager {
         return currentUser;
     }
 
-    public static void setCurrentUser(MemberDTO user) {	// Id¿Í Pwd¸¦ Å¬·¡½º °´Ã¼·Î user »ı¼º
+    public static void setCurrentUser(MemberDTO user) {	// Idì™€ Pwdë¥¼ í´ë˜ìŠ¤ ê°ì²´ë¡œ user ìƒì„±
         currentUser = user;
     }
 
     public static void logout() {
     	if (currentUser != null) {
-            System.out.println(currentUser.getOrderId() + " ´ÔÀÌ ·Î±×¾Æ¿ô ÇÕ´Ï´Ù."); // ·Î±×¾Æ¿ô ½Ã¿¡ ¾ÆÀÌµğ Ãâ·Â
+            System.out.println(currentUser.getOrderId() + " ë‹˜ì´ ë¡œê·¸ì•„ì›ƒ í•©ë‹ˆë‹¤."); // ë¡œê·¸ì•„ì›ƒ ì‹œì— ì•„ì´ë”” ì¶œë ¥
         } else {
-            System.out.println("·Î±×ÀÎ »óÅÂ°¡ ¾Æ´Õ´Ï´Ù.");
+            System.out.println("ë¡œê·¸ì¸ ìƒíƒœê°€ ì•„ë‹™ë‹ˆë‹¤.");
         }
         currentUser = null;
     }

@@ -17,7 +17,7 @@ public class Main {
 		mi.firstSession();
 		while(true)  {
 			do {
-				System.out.print("\n1. ±¸¸Å / 2. ±¸¸Å¸ñ·Ï / 3. Àç°í¸ñ·Ï Á¶È¸ / 4. ·Î±×¾Æ¿ô / 5. Á¾·á  : ");
+				System.out.print("\n1. êµ¬ë§¤ / 2. êµ¬ë§¤ëª©ë¡ / 3. ì¬ê³ ëª©ë¡ ì¡°íšŒ / 4. ë¡œê·¸ì•„ì›ƒ / 5. ì¢…ë£Œ  : ");
 				ch = sc.nextInt();
 			} while(ch < 1);
 			
@@ -32,9 +32,9 @@ public class Main {
 				break;
 				
 			case 3:
-				System.out.println("\n------------------------ Àç°í¸ñ·Ï ------------------------");
+				System.out.println("\n------------------------ ì¬ê³ ëª©ë¡ ------------------------");
 				System.out.println("|\t\t\t\t\t\t\t" + " |");
-	            System.out.println("       Á¦Ç°ÄÚµå\t\t»óÇ°¸í\t\t°¡°İ\t   ¼ö·®");
+	            System.out.println("       ì œí’ˆì½”ë“œ\t\tìƒí’ˆëª…\t\tê°€ê²©\t   ìˆ˜ëŸ‰");
 	            System.out.println("----------------------------------------------------------");
 	            ob.List();
 				System.out.println("|\t\t\t\t\t\t\t" + " |");
@@ -45,7 +45,7 @@ public class Main {
 				SessionManager.logout();
 				
 			case 5:
-				System.out.println("ÇÁ·Î±×·¥ Á¾·á");
+				System.out.println("í”„ë¡œê·¸ë¨ ì¢…ë£Œ");
 				System.exit(0);
 				
 			}

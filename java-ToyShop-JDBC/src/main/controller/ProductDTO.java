@@ -1,7 +1,7 @@
 package main.controller;
 
-public class ProductDTO {		// Data Transfer Object - µ¥ÀÌÅÍ¸¦ Àü´Ş¸¸ ÇØÁÖ´Â ¿ªÇÒ
-	// Value Object(VO) - µ¥ÀÌÅÍ¸¦ °¡Áö°í ÀÖ´Â °´Ã¼
+public class ProductDTO {		// Data Transfer Object - ë°ì´í„°ë¥¼ ì „ë‹¬ë§Œ í•´ì£¼ëŠ” ì—­í• 
+	// Value Object(VO) - ë°ì´í„°ë¥¼ ê°€ì§€ê³  ìˆëŠ” ê°ì²´
 	
 
 	
@@ -54,13 +54,13 @@ public class ProductDTO {		// Data Transfer Object - µ¥ÀÌÅÍ¸¦ Àü´Ş¸¸ ÇØÁÖ´Â ¿ªÇÒ
 	@Override
 	public String toString() {
 		String str;
-		str = String.format("%8s %17s %14d ¿ø %8d", productId, productName, price, quantity);
+		str = String.format("%8s %17s %14d ì› %8d", productId, productName, price, quantity);
 		return str;
 	}
 	
 	public String toString2() {
 		String str;
-		str = String.format("%8s %17s %14d ¿ø %8d %8d", productId, productName, price, quantity, totalprice);
+		str = String.format("%8s %17s %14d ì› %8d %8d", productId, productName, price, quantity, totalprice);
 		return str;
 	}
 	

@@ -1,115 +1,94 @@
 package main.controller;
 
+import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
-public class ProductIO {	// »ç¿ëÀÚ ÀÔ·Â¹Ş±â
+public class ProductIO {
+    ProductDAO dao = new ProductDAO();
+    Scanner sc = new Scanner(System.in);
 
-	ProductDAO dao = new ProductDAO();
-	ProductDTO dto = new ProductDTO();
-	Scanner sc = new Scanner(System.in);
-	static String productName;
-	
-	// Á¦Ç° ´ã±â
-	public void basket() { 
-		
-	    System.out.print("¾î¶² Á¦Ç°À» ±¸¸ÅÇÏ½Ã°Ú½À´Ï±î ? ");
-	    String productName = sc.next();
-	    System.out.print("¼ö·®À» ÀÔ·ÂÇØÁÖ¼¼¿ä : ");
-	    int quantity = sc.nextInt();
-	    
-	    System.out.println("Àå¹Ù±¸´Ï¿¡ Ãß°¡µÇ¾ú½À´Ï´Ù.");
-//	    dto.setProductName(productName);
-//	    dto.setQuantity(quantity);
-	    
-	    dao.addToCart(dto);
-	}
-	
-	// ±¸¸ÅÇÏ·Á´Â ¸ñ·Ï
-	public void cartViewAndPurchase() {
-		
-		// ÀÔ·Â¹ŞÀº Á¦Ç° ÀÌ¸§À» Åä´ë·Î Á¦Ç°ÀÇ Á¤º¸¸¦ °¡Á®¿À±â
-	    List<ProductDTO> cartItems = dao.getCartItems();
-	    
-	 // ±¸¸ÅÇÒ Ç°¸ñÀÌ ÀÖ´ÂÁö È®ÀÎ
-        if (cartItems.isEmpty()) {
-            System.out.println("Àå¹Ù±¸´Ï°¡ ºñ¾î ÀÖ½À´Ï´Ù.");
-        } else {
-            // Àå¹Ù±¸´Ï ³»¿ë Ãâ·Â
-            System.out.println("Àå¹Ù±¸´Ï ³»¿ë:");
-            for (ProductDTO cartItem : cartItems) {
-                System.out.println(cartItem.toString2());
-            }
+    // ì œí’ˆ ë‹´ê¸°
+    public void basket() {
+        System.out.print("ì–´ë–¤ ì œí’ˆì„ êµ¬ë§¤í•˜ì‹œê² ìŠµë‹ˆê¹Œ ? ");
+        String productName = sc.next();
+        System.out.print("ìˆ˜ëŸ‰ì„ ì…ë ¥í•´ì£¼ì„¸ìš” : ");
+        int quantity = sc.nextInt();
 
-            // ±¸¸Å ¿©ºÎ È®ÀÎ
-            System.out.print("±¸¸ÅÇÏ½Ã°Ú½À´Ï±î? (Y/N): ");
-            String answer = sc.next();
-            if (answer.equalsIgnoreCase("Y")) {
-                // Àå¹Ù±¸´Ï¿¡ ÀÖ´Â Ç°¸ñµéÀ» ±¸¸Å
-                dao.purchaseFromCart(cartItems);
-            }
+        // ProductDTOë¥¼ ìƒì„±í•˜ì—¬ í•„ìš”í•œ ì •ë³´ ì„¤ì •
+        ProductDTO dto = new ProductDTO();
+        dto.setProductId(productName);
+        dto.setQuantity(quantity);
 
-            // Àå¹Ù±¸´Ï ºñ¿ì±â
-            dao.clearCart();
-        }
-	    // °¡Á®¿Â Á¦Ç° Á¤º¸°¡ ÀÖÀ¸¸é ±¸¸Å¸ñ·Ï¿¡ Ãß°¡
-//	    if (productInfo != null) {
-//	        System.out.println("»óÇ° Á¤º¸: " + productInfo.toString());
-//
-//	    } else {
-//	        System.out.println("»óÇ° Á¤º¸¸¦ °¡Á®¿Ã ¼ö ¾ø½À´Ï´Ù.");
-//	    }
-		
-	}
-	
-	public void viewAndPurchaseCart() {
-        // Àå¹Ù±¸´Ï¿¡ ´ã±ä Ç°¸ñµéÀ» Á¶È¸
+        // ì¥ë°”êµ¬ë‹ˆì— ì œí’ˆ ì¶”ê°€
+        dao.addToCart(dto);
+        System.out.println("ì¥ë°”êµ¬ë‹ˆì— ì¶”ê°€ë˜ì—ˆìŠµë‹ˆë‹¤.");
+    }
+
+    // êµ¬ë§¤í•˜ë ¤ëŠ” ëª©ë¡
+    public void cartViewAndPurchase() throws SQLException {
+        // ì¥ë°”êµ¬ë‹ˆì— ë‹´ê¸´ í’ˆëª©ë“¤ì„ ì¡°íšŒ
         List<ProductDTO> cartItems = dao.getCartItems();
 
-        // ±¸¸ÅÇÒ Ç°¸ñÀÌ ÀÖ´ÂÁö È®ÀÎ
+        // êµ¬ë§¤í•  í’ˆëª©ì´ ìˆëŠ”ì§€ í™•ì¸
         if (cartItems.isEmpty()) {
-            System.out.println("Àå¹Ù±¸´Ï°¡ ºñ¾î ÀÖ½À´Ï´Ù.");
+            System.out.println("ì¥ë°”êµ¬ë‹ˆê°€ ë¹„ì–´ ìˆìŠµë‹ˆë‹¤.");
         } else {
-            // Àå¹Ù±¸´Ï ³»¿ë Ãâ·Â
-            System.out.println("Àå¹Ù±¸´Ï ³»¿ë:");
+            // ì¥ë°”êµ¬ë‹ˆ ë‚´ìš© ì¶œë ¥
+            System.out.println("ì¥ë°”êµ¬ë‹ˆ ë‚´ìš©:");
             for (ProductDTO cartItem : cartItems) {
                 System.out.println(cartItem.toString());
             }
 
-            // ±¸¸Å ¿©ºÎ È®ÀÎ
-            System.out.print("±¸¸ÅÇÏ½Ã°Ú½À´Ï±î? (Y/N): ");
+            // êµ¬ë§¤ ì—¬ë¶€ í™•ì¸
+            System.out.print("êµ¬ë§¤í•˜ì‹œê² ìŠµë‹ˆê¹Œ? (Y/N): ");
             String answer = sc.next();
             if (answer.equalsIgnoreCase("Y")) {
-                // Àå¹Ù±¸´Ï¿¡ ÀÖ´Â Ç°¸ñµéÀ» ±¸¸Å
                 dao.purchaseFromCart(cartItems);
             }
 
-            // Àå¹Ù±¸´Ï ºñ¿ì±â
+            // ì¥ë°”êµ¬ë‹ˆ ë¹„ìš°ê¸°
             dao.clearCart();
         }
     }
-	// ¼öÁ¤	-- ¹°Ç° ´Ù½Ã ´ã±â? ¾Æ´Ï¸é ´õ »ç±â?
+
+    // ì‚­ì œ
+    public void delete1() {
+        System.out.print("ì‚­ì œí•  ì œí’ˆ ì½”ë“œ : ");
+        String productId = sc.next();
+
+        // ì‚­ì œ ë©”ì„œë“œ í˜¸ì¶œ
+        int result = dao.dataDelete(productId);
+
+        if (result != 0) {
+            System.out.println("ì‚­ì œ ì„±ê³µ!");
+        } else {
+            System.out.println("ì‚­ì œ ì‹¤íŒ¨!");
+        }
+    }
+
+	// ìˆ˜ì •	-- ë¬¼í’ˆ ë‹¤ì‹œ ë‹´ê¸°? ì•„ë‹ˆë©´ ë” ì‚¬ê¸°?
 	public void update() {
 		
 	}
 	
-	// »èÁ¦
+	// ì‚­ì œ
 	public void delete() {
 		
-		System.out.print("»èÁ¦ÇÒ Á¦Ç° ÄÚµå : ");
+		System.out.print("ì‚­ì œí•  ì œí’ˆ ì½”ë“œ : ");
 		String productId = sc.next();
 		
 		int result = dao.dataDelete(productId);
 		
 		if(result != 0) {
-			System.out.println("»èÁ¦ ¼º°ø!");
+			System.out.println("ì‚­ì œ ì„±ê³µ!");
 		} else {
-			System.out.println("»èÁ¦ ½ÇÆĞ!");
+			System.out.println("ì‚­ì œ ì‹¤íŒ¨!");
 		}
 	}
 	
-	// Àç°í¸ñ·Ï Á¶È¸
+	// ì¬ê³ ëª©ë¡ ì¡°íšŒ
 	public void List() {
 		List<ProductDTO> lists = dao.getAllProducts();
 		Iterator<ProductDTO> it = lists.iterator();
@@ -119,7 +98,7 @@ public class ProductIO {	// »ç¿ëÀÚ ÀÔ·Â¹Ş±â
 		}
 	}
 
-	// °Ë»ö
+	// ê²€ìƒ‰
 	public void search() {
 	}
 	
