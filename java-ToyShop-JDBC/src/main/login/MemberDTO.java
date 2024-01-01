@@ -33,7 +33,9 @@ public class MemberDTO {
 	@Override
 	public String toString() {
 		String str;
-		str = String.format("%8s %8s", orderId, orderPwd);
+		str = String.format("%8s %8s %8d", orderId, orderPwd, money);
 		return str;
 	}
+	
+	
 }

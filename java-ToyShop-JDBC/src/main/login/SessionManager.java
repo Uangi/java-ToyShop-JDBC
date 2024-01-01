@@ -2,7 +2,7 @@ package main.login;
 
 public class SessionManager {
 
-	private static MemberDTO currentUser;
+	private static MemberDTO currentUser;	// 사용자 정보 저장하기
 
     public static MemberDTO getCurrentUser() {
         return currentUser;
@@ -15,8 +15,6 @@ public class SessionManager {
     public static void logout() {
     	if (currentUser != null) {
             System.out.println(currentUser.getOrderId() + " 님이 로그아웃 합니다."); // 로그아웃 시에 아이디 출력
-        } else {
-            System.out.println("로그인 상태가 아닙니다.");
         }
         currentUser = null;
     }

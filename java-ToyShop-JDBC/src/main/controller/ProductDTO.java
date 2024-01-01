@@ -1,17 +1,13 @@
 package main.controller;
 
 public class ProductDTO {		// Data Transfer Object - 데이터를 전달만 해주는 역할
-	// Value Object(VO) - 데이터를 가지고 있는 객체
-	
 
-	
 	private String productId;
 	private String productName;
 	private int CartId;
 	private int price;
 	private int quantity;
 	private int totalprice;
-	
 	
 	public String getProductId() {
 		return productId;
@@ -70,7 +66,7 @@ public class ProductDTO {		// Data Transfer Object - 데이터를 전달만 해�
 	
 	public String toString2() {
 		String str;
-		str = String.format("%s %17s %14d 원 %8d %8d", productId != null ? productId : "", productName, price, quantity, totalprice);
+		str = String.format("%10s %24s %15d 원 %10d %10d", productId != null ? productId : "", productName, price, quantity, totalprice);
 		return str;
 	}
 	
