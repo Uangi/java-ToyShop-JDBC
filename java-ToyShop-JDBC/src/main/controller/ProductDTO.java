@@ -7,17 +7,11 @@ public class ProductDTO {		// Data Transfer Object - 데이터를 전달만 해�
 	
 	private String productId;
 	private String productName;
+	private int CartId;
 	private int price;
 	private int quantity;
 	private int totalprice;
 	
-	public int getTotalprice() {
-		return totalprice;
-	}
-	
-	public void setTotalprice(int totalprice) {
-		this.totalprice = totalprice;
-	}
 	
 	public String getProductId() {
 		return productId;
@@ -35,6 +29,14 @@ public class ProductDTO {		// Data Transfer Object - 데이터를 전달만 해�
 		this.productName = productName;
 	}
 
+	public int getCartId() {
+		return CartId;
+	}
+
+	public void setCartId(int cartId) {
+		CartId = cartId;
+	}
+	
 	public int getPrice() {
 		return price;
 	}
@@ -51,6 +53,14 @@ public class ProductDTO {		// Data Transfer Object - 데이터를 전달만 해�
 		this.quantity = quantity;
 	}
 	
+	public int getTotalprice() {
+		return totalprice;
+	}
+	
+	public void setTotalprice(int totalprice) {
+		this.totalprice = totalprice;
+	}
+	
 	@Override
 	public String toString() {
 		String str;
@@ -60,7 +70,7 @@ public class ProductDTO {		// Data Transfer Object - 데이터를 전달만 해�
 	
 	public String toString2() {
 		String str;
-		str = String.format("%8s %17s %14d 원 %8d %8d", productId, productName, price, quantity, totalprice);
+		str = String.format("%s %17s %14d 원 %8d %8d", productId != null ? productId : "", productName, price, quantity, totalprice);
 		return str;
 	}
 	

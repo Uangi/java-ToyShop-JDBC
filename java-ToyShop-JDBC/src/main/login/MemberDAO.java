@@ -14,7 +14,7 @@ public class MemberDAO {
 	
 		public MemberDAO() { }
 	
-		public static MemberDAO getInstance() {	// �̱���
+		public static MemberDAO getInstance() {	
 			if (instance == null) {
             instance = new MemberDAO();
         }
@@ -70,7 +70,9 @@ public class MemberDAO {
 			        pstmt.close();
 		        } catch (Exception e) {
 		            System.out.println(e.toString());
-		        } 
+		        }   finally {
+		            DBConn.close(conn, pstmt);
+		        }
 
 		        return member;
 		    }

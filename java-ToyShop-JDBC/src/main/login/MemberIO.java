@@ -3,7 +3,6 @@ package main.login;
 import java.util.Scanner;
 
 public class MemberIO {
-
 	Scanner sc = new Scanner(System.in);
 	
 	public MemberIO registInput() {
@@ -14,7 +13,8 @@ public class MemberIO {
         mto.setOrderId(sc.next());
         System.out.print("비밀번호 : ");
         mto.setOrderPwd(sc.next());
-        
+        System.out.print("현금 : ");
+        mto.setMoney(sc.nextInt());
 	    int result = mao.userRegister(mto);
 
 	    if (result != 0) {

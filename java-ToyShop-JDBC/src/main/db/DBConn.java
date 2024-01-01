@@ -3,6 +3,7 @@ package main.db;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 public class DBConn {
@@ -27,7 +28,7 @@ public class DBConn {
 		return dbConn;
 	}
 
-	public static void close(Connection conn, CallableStatement cstmt, ResultSet rs) {	// db 닫기
+	public static void close(Connection conn, PreparedStatement pstmt) {	// db 닫기
 		if(dbConn!=null) {
 			
 			try { 
