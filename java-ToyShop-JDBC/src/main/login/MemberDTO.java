@@ -34,6 +34,7 @@ public class MemberDTO {
 	public String toString() {
 		String str;
 		str = String.format("%8s %8s %8d", orderId, orderPwd, money);
+//		System.out.println(orderId + "             " + orderPwd + money);
 		return str;
 	}
 	

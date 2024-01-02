@@ -46,7 +46,7 @@ public class MemberDAO {
 	    return result;
 	}
 		
-		// 중복검사 DB 내부에 똑같은 order_id나 order_pwd가 있는지 
+		// DB 내부에 입력한 order_id와 order_pwd가 일치하는지  
 		 public MemberDTO loginCheck(String orderId, String orderPwd) {
 		        MemberDTO member = null;
 		        Connection conn = DBConn.getConnection();
@@ -106,6 +106,12 @@ public class MemberDAO {
 
 			    return member;
 			}	
+		 
+		 // 관리자 정보 가져오기 
+		 public void adminInfo() {
+			 
+		 }
+
 		 
 		 // 구매 후 잔액 업데이트
 		 public void moneyUpdate(MemberDTO mto) {	

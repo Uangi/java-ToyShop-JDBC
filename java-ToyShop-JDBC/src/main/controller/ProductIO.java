@@ -1,7 +1,6 @@
 package main.controller;
 
 import java.sql.SQLException;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
@@ -18,6 +17,7 @@ public class ProductIO {
     
     /////																					////// 구매할 물건 고르기
     public void basket() {
+    	System.out.println("==========================================================================");
         System.out.print("어떤 제품을 구매하시겠습니까 ? ");
         String productName = sc.next();
         System.out.print("수량을 입력해주세요 : ");
@@ -48,17 +48,17 @@ public class ProductIO {
             System.out.println("장바구니가 비어 있습니다.");
         } else {
         	////																					////// 장바구니 내용 출력
-        	System.out.printf("%10s%18s%14s%11s%8s\n", "장바구니 번호", "상품명", "가격", "수량", "합계");
-        	System.out.println("==================================================================");
-        	int totalCost = 0;
-        	for (ProductDTO cartItem : cartItems) {
-        	    System.out.printf("%10d%20s%15d%10d%10d\n", cartItem.getCartId(), cartItem.getProductName(),
+        	System.out.printf("%10s%18s%13s%10s%8s\n", "장바구니 번호", "상품명", "가격", "수량", "합계");
+            System.out.println("===========================================================================");
+            int totalCost = 0;
+            for (ProductDTO cartItem : cartItems) {
+                System.out.printf("%10d%24s%16d%11d%11d\n", cartItem.getCartId(), cartItem.getProductName(),
         	    		cartItem.getPrice(), cartItem.getQuantity(), cartItem.getTotalprice());	// 출력
         	    totalCost += cartItem.getTotalprice();	// 장바구니에 있는 물품들 SUM(가격*수량)
         	}
 
         	/////																					////// 구매 여부 확인
-        	System.out.println("\n갖고 있는 현금은 " + mto.getMoney() + "원이며 계산하실 총 금액은 "  + totalCost + "원입니다.");
+        	System.out.println("\n남은 잔액은 " + mto.getMoney() + "원이며 계산하실 총 금액은 "  + totalCost + "원입니다.");
             System.out.print(" Y : 구매 / N : 고민 / C : 선택취소 :  ");
             String answer = sc.next();
             if (answer.equalsIgnoreCase("Y")) {
@@ -66,7 +66,7 @@ public class ProductIO {
             	int remainingMoney = mto.getMoney() - totalCost;
                 mto.setMoney(remainingMoney); // 잔액
                 
-                dao.purchaseFromCart(cartItems);
+//                dao.purchaseFromCart(cartItems);
                 dao.clearCart(); // 장바구니 비우기
                 System.out.println("남아있는 현금은 " + mto.getMoney() + "원입니다.");
                 mao.moneyUpdate(mto); // 잔액 업데이트

@@ -60,10 +60,10 @@ public class ProductDTO {		// Data Transfer Object - 데이터를 전달만 해�
 	@Override
 	public String toString() {
 		String str;
-		str = String.format("%8s %17s %14d 원 %8d", productId, productName, price, quantity);
+		str = String.format("%13s %21s %,11d원 %9d", productId, productName, price, quantity);
 		return str;
 	}
-	
+
 	public String toString2() {
 		String str;
 		str = String.format("%10s %24s %15d 원 %10d %10d", productId != null ? productId : "", productName, price, quantity, totalprice);

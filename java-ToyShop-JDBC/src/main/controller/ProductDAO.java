@@ -15,7 +15,7 @@ public class ProductDAO {		// DB에 연결 처리 클래스 (Data Access Object)
 	 public ProductDAO() {
 	        this.connection = DBConn.getConnection();
 	    }
-	private static MemberDTO mto;
+	 private static MemberDTO mto;					// 싱글톤
 	 private static MemberDTO getMemberDTOInstance() {
 	        if (mto == null) {
 	            mto = new MemberDTO();
@@ -98,11 +98,11 @@ public class ProductDAO {		// DB에 연결 처리 클래스 (Data Access Object)
 	    }
 
 	    																				///// 장바구니 구매결정
-    public void purchaseFromCart(List<ProductDTO> cartItems) throws SQLException {
-        Connection conn = DBConn.getConnection();
-        PreparedStatement pstmt = null;
-            DBConn.close(conn, pstmt);
-    }
+//    public void purchaseFromCart(List<ProductDTO> cartItems) throws SQLException {
+//        Connection conn = DBConn.getConnection();
+//        PreparedStatement pstmt = null;
+//            DBConn.close(conn, pstmt);
+//    }
     
     																					//// temp 비우기
     public void clearTemp() {	// 구매하지 않을 경우 cart는 남겨두고 temp만 지워두기. ( 안그러면 새로 구매하려는 물품 입력 시 중복됨.)
@@ -131,7 +131,6 @@ public class ProductDAO {		// DB에 연결 처리 클래스 (Data Access Object)
     }	
     
 																						//// cart 비우기
-    @SuppressWarnings("resource")
 	public void clearCart() {	// 구매하면 temp와 cart 둘 다 지우기
         Connection conn = DBConn.getConnection();
         PreparedStatement pstmt = null;
@@ -287,7 +286,7 @@ public class ProductDAO {		// DB에 연결 처리 클래스 (Data Access Object)
 	}
 	
 	
-    /////																					////// 제품 목록 조회
+    /////				상품목록 조회															////// 제품 목록 조회
 	public List<ProductDTO> getAllProducts() {
 		List<ProductDTO> lists = new ArrayList<ProductDTO>();
 		Connection conn = DBConn.getConnection();
@@ -315,31 +314,8 @@ public class ProductDAO {		// DB에 연결 처리 클래스 (Data Access Object)
 		}
 		return lists;
 	}
-	// 제품 추가    (관리자)	-- 
-	
-	// 제품 수정	(관리자)	-- 
 	
 	
-//	관리자 제품 삭제
-//	public int dataDelete(String productId) {
-//		int result = 0;
-//		Connection conn = DBConn.getConnection();
-//		CallableStatement cstmt = null;
-//		String sql;
-//		try {
-//			sql = "{call deleteScore(?)}";
-//			
-//			cstmt = conn.prepareCall(sql);
-//			cstmt.setString(1, productId);	// 제품코드를 토대로 그 데이터 삭제
-//			result = cstmt.executeUpdate();
-//			cstmt.close();
-//			
-//		} catch (Exception e) {
-//			System.out.println(e.toString());
-//		}
-//		return result;
-//	}
-
 	
 	
 }
