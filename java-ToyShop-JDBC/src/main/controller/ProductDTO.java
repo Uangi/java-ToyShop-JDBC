@@ -69,5 +69,5 @@ public class ProductDTO {		// Data Transfer Object - 데이터를 전달만 해�
 		str = String.format("%10s %24s %15d 원 %10d %10d", productId != null ? productId : "", productName, price, quantity, totalprice);
 		return str;
 	}
-	
+
 }

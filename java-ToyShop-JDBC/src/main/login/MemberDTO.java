@@ -5,7 +5,7 @@ public class MemberDTO {
 	private String orderId;
 	private String orderPwd;
 	private int money;
-	
+
 	public int getMoney() {
 		return money;
 	}
@@ -21,15 +21,15 @@ public class MemberDTO {
 	public String getOrderPwd() {
 		return orderPwd;
 	}
-	
+
 	public void setOrderId(String orderId) {
 		this.orderId = orderId;
 	}
-	
+
 	public void setOrderPwd(String orderPwd) {
 		this.orderPwd = orderPwd;
 	}
-	
+
 	@Override
 	public String toString() {
 		String str;
@@ -37,6 +37,5 @@ public class MemberDTO {
 //		System.out.println(orderId + "             " + orderPwd + money);
 		return str;
 	}
-	
-	
+
 }
